@@ -26,7 +26,13 @@
             </div>
             <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">S'inscrire</button>
         </form>
-        <p class="text-center text-sm mt-4 <?= (strpos($message, 'registered successfully') !== false) ? 'text-green-600' : 'text-red-600' ?>"><?= (!empty($message)) ? $message : "" ?></p>
+
+        <?php if (isset($_SESSION["success"]) || isset($_SESSION["error"])): ?>
+            <p class="text-center text-sm mt-4 <?= isset($_SESSION["success"]) ? 'text-green-600' : 'text-red-600' ?>">
+                <?= $_SESSION["success"] ?? $_SESSION["error"] ?>
+            </p>
+        <?php endif; ?>
+        <?php session_unset() ?>
         <p class="text-center text-sm text-gray-600 mt-4">
             Déjà inscrit ? <a href="/login" class="text-blue-500 hover:underline">Se connecter</a>
         </p>

@@ -28,7 +28,7 @@
             </div>
             <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Se connecter</button>
         </form>
-        <p class="text-center mt-3 text-red-600"><?= (!empty($signIn)) ? $signIn : "" ?></p>
+        <p class="text-center mt-3 text-red-600"><?= (!empty($_SESSION["error"])) ? $_SESSION["error"] : "" ; session_unset()?></p>
         <p class="text-center text-sm text-gray-600 mt-4">
             Pas encore inscrit ? <a href="/signup" class="text-blue-500 hover:underline">Créer un compte</a>
         </p>

@@ -1,8 +1,9 @@
 <?php
 
-require "model/Database.php";
-require "model/Users.php";
-require "model/Student.php";
+require_once "model/Database.php";
+require_once "model/Users.php";
+require_once "model/Student.php";
+
 
 // $uri = parse_url($_SERVER["REQUEST_URI"])["path"];
 
@@ -23,16 +24,20 @@ require "model/Student.php";
 //     require "view/404.view.php";
 // }
 
+require_once "controller/login.php";
+require_once "controller/signup.php";
+require_once "controller/dashboard.php";
+
 class router
 {
     private array $routes = [];
 
 
-    public function get(string $path, string $controller)
+    public function get(string $path, array|string $controller)
     {
         $this->routes["GET"][$path] = $controller;
     }
-    public function post(string $path, string $controller)
+    public function post(string $path, array|string $controller)
     {
         $this->routes["POST"][$path] = $controller;
     }
@@ -43,10 +48,23 @@ class router
         foreach ($this->routes[$method] as $route => $controller) {
             $pattern = preg_replace('/{([\w]+)}/', '([^/]+)', $route);
             $pattern = "#^" . $pattern . "$#";
-            if (preg_match($pattern, $uri, $matches)) {
-                array_shift($matches);
-                $_GET["id"] = $matches;
-                return require $controller;
+            if (preg_match($pattern, $uri, $matches) || preg_match("#^" . $route . "$#", $uri)) {
+                if (isset($matches[0])) {
+                    array_shift($matches);
+                    $param = $matches;
+                } else {
+                    $param = [];
+                }
+                if (is_array($controller)) {
+                    $classname = $controller[0];
+                    $function = $controller[1];
+                    $instance = new $classname();
+                    $instance->$function($param);
+                    return;
+                } else {
+                    include $controller;
+                    return;
+                }
             }
         }
         http_response_code(404);
@@ -55,17 +73,16 @@ class router
 }
 
 
-
 $route = new router;
 $route->get("/", "controller/index.php");
-$route->get("/home", "controller/index.php");
-$route->get("/dashboard", "controller/dashboard.php");
-$route->get("/login", "controller/login.php");
-$route->get("/signup", "controller/signup.php");
-$route->get("/dashboard/{id}", "controller/dashboard.php");
+$route->get("/dashboard", [StudentDashboardController::class , 'showDashboard']);
+$route->get("/signup", [SignupController::class, 'ShowSignup']);
+// $route->get("/dashboard/{id}", "controller/dashboard.php");
+$route->get("/login",  [LoginController::class, 'showLogin']);
 
 
-$route->post("/login", "controller/login.php");
-$route->post("/signup", "controller/signup.php");
-$route->post("/dashboard", "controller/dashboard.php");
+$route->post('/login', [LoginController::class, 'index']);
+$route->post("/signup", [SignupController::class, 'HandleSignup']);
+$route->post("/dashboard", [StudentDashboardController::class , 'SuggestVeille']);
+$route->post("/dashboard/Delete", [StudentDashboardController::class , 'DeleteSuggested']);
 $route->resolve();

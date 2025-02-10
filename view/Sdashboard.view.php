@@ -243,18 +243,50 @@
                             <div class="border-b border-gray-100 p-6">
                                 <h2 class="text-lg font-semibold text-gray-900">Sujets Suggérés</h2>
                             </div>
-                            <div class="p-6">
-                                <ul class="divide-y divide-gray-100">
-                                    <li class="py-4 first:pt-0 last:pb-0">
-                                        <h3 class="text-base font-medium text-gray-900">Cloud Computing</h3>
-                                        <p class="text-sm text-gray-500 mt-1">Architecture et services cloud modernes</p>
-                                    </li>
-                                    <li class="py-4">
-                                        <h3 class="text-base font-medium text-gray-900">DevOps</h3>
-                                        <p class="text-sm text-gray-500 mt-1">Pratiques et outils DevOps</p>
-                                    </li>
-                                </ul>
-                            </div>
+                            <?php foreach ($show as $veille) : ?>
+                                <div class="px-6">
+                                    <div class="border-b border-gray-100 last:border-b-0">
+                                        <div class="py-4">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex-1">
+                                                    <h3 class="text-base font-medium text-gray-900"><?= $veille["veille_subject"] ?></h3>
+                                                    <div class="flex items-center mt-2 space-x-4">
+                                                        <span class="<?= ($veille['is_suggested'] === "true")
+                                                                            ? "bg-orange-100 text-orange-700"
+                                                                            : "bg-green-100 text-green-700" ?> 
+                                                            text-xs px-2.5 py-0.5 rounded-full font-medium">
+                                                            <?= ($veille["is_suggested"] === "true") ? "En attente" : "Approuvé" ?>
+                                                        </span>
+                                                        <span class="text-sm text-gray-500">
+                                                            <?= date('d/m/Y/H:i', strtotime($veille["veille_date"]))
+                                                            ?>
+                                                        </span>
+                                                        <?php if ($veille["is_suggested"] === "true"): ?>
+                                                            <form action="/dashboard/Delete" method="POST" class="inline">
+                                                                <input type="hidden" name="veille_id" value="<?= $veille["veille_id"] ?>">
+                                                                <button type="submit"
+                                                                    class="text-red-600 hover:text-red-800 text-sm font-medium inline-flex items-center"
+                                                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette suggestion ?')">
+                                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                    </svg>
+                                                                    Supprimer
+                                                                </button>
+                                                            </form>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach ?>
                         </div>
 
                         <!-- Suggest New Topic -->
@@ -266,7 +298,10 @@
                                 <form action="/dashboard" class="space-y-4" method="post">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                                        <input name="subject" type="text" class="w-full rounded-lg border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                        <input
+                                            name="subject"
+                                            type="text"
+                                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors">
                                     </div>
                                     <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
                                         Soumettre
