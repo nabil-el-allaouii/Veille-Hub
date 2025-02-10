@@ -27,6 +27,7 @@ require_once "model/Student.php";
 require_once "controller/login.php";
 require_once "controller/signup.php";
 require_once "controller/dashboard.php";
+require_once "controller/admin.php";
 
 class router
 {
@@ -79,6 +80,7 @@ $route->get("/dashboard", [StudentDashboardController::class , 'showDashboard'])
 $route->get("/signup", [SignupController::class, 'ShowSignup']);
 // $route->get("/dashboard/{id}", "controller/dashboard.php");
 $route->get("/login",  [LoginController::class, 'showLogin']);
+$route->get("/Admin",  [AdminController::class, 'showDashboard']);
 
 
 $route->post('/login', [LoginController::class, 'index']);
